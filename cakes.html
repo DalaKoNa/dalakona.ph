@@ -114,24 +114,8 @@
   </div>
 
   <!-- Checkout Modal -->
-  <div id="checkout-modal" style="
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  ">
-    <div style="
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
-      position: relative;
-    ">
+  <div id="checkout-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000;">
+    <div style="background: #fff; padding: 1.5rem; border-radius: 12px; width: 90%; max-width: 400px; position: relative;">
       <h3>Customer Info</h3>
       <label>Name:<br><input type="text" id="cust-name" required style="width: 100%;" /></label><br><br>
       <label>Phone:<br><input type="text" id="cust-phone" required style="width: 100%;" /></label><br><br>
@@ -232,50 +216,61 @@
       document.getElementById("checkout-modal").style.display = "none";
     }
 
-    function submitOrder() {
-      if (Object.keys(cart).length === 0) {
-        alert("Your cart is empty.");
-        return;
-      }
+    function setAutoDeliveryDateTime() {
+      const now = new Date();
+      const delivery = new Date(now.getTime() + 60 * 60 * 1000);
+      const date = delivery.toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
+      const time = delivery.toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
+      document.getElementById("cust-date").value = date;
+      document.getElementById("cust-time").value = time;
+    }
 
+    function submitOrder() {
+      if (Object.keys(cart).length === 0) return alert("Your cart is empty.");
       const name = document.getElementById("cust-name").value.trim();
       const phone = document.getElementById("cust-phone").value.trim();
       const address = document.getElementById("cust-address").value.trim();
       const date = document.getElementById("cust-date").value.trim();
       const time = document.getElementById("cust-time").value.trim();
       const payment = document.getElementById("cust-payment").value;
+      if (!name || !phone || !address || !date || !time) return alert("Please fill in all fields.");
 
-      if (!name || !phone || !address || !date || !time) {
-        alert("Please fill in all fields.");
-        return;
-      }
-
-      const items = Object.values(cart)
-        .map(item => `${item.name} x${item.qty} = ₱${(item.qty * item.price).toFixed(2)}`)
-        .join('\n');
-
+      const paymentStatus = (payment === "GCash" || payment === "PayMaya") ? "Paid" : "Unpaid";
+      const items = Object.values(cart).map(item => `${item.name} x${item.qty} = ₱${(item.qty * item.price).toFixed(2)}`).join('\n');
       const subtotal = Object.values(cart).reduce((sum, item) => sum + item.qty * item.price, 0);
       const total = subtotal + deliveryFee + serviceFee;
 
-      const message = `*DalaKoNa Order*\n\n🧁 *Items:*\n${items}\n\nSubtotal: ₱${subtotal.toFixed(2)}\nDelivery: ₱${deliveryFee}\nService Fee: ₱${serviceFee}\n*Total: ₱${total.toFixed(2)}*\n\n📍 *Delivery Address:* ${address}\n🗓 *Date:* ${date}\n🕒 *Time:* ${time}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n💸 *Payment:* ${payment}`;
+      const baseMsg = `*DalaKoNa Order*\n\n🧁 *Items:*\n${items}\n\nSubtotal: ₱${subtotal.toFixed(2)}\nDelivery: ₱${deliveryFee}\nService Fee: ₱${serviceFee}\n*Total: ₱${total.toFixed(2)}*\n\n📍 *Delivery Address:* ${address}\n🗓 *Date:* ${date}\n🕒 *Time:* ${time}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n💸 *Payment:* ${payment}\n📌 *Payment Status:* ${paymentStatus}`;
 
-      const phoneNumber = "63XXXXXXXXXX"; // Replace with actual WhatsApp number
-      const encodedMsg = encodeURIComponent(message);
-      window.open(`https://wa.me/${phoneNumber}?text=${encodedMsg}`, "_blank");
+      const merchantNumber = "63XXXXXXXXXX"; // Replace with merchant WhatsApp
+      const adminNumber = "63YYYYYYYYYY";    // Replace with admin WhatsApp
+
+      function sendWhatsApp(msg, number) {
+        const encoded = encodeURIComponent(msg);
+        window.open(`https://wa.me/${number}?text=${encoded}`, "_blank");
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+          const fullMsg = `${baseMsg}\n🌐 *Location:* ${mapLink}`;
+          sendWhatsApp(fullMsg, merchantNumber);
+          sendWhatsApp(fullMsg, adminNumber);
+        }, () => {
+          const fullMsg = `${baseMsg}\n🌐 *Location:* Not shared`;
+          sendWhatsApp(fullMsg, merchantNumber);
+          sendWhatsApp(fullMsg, adminNumber);
+        });
+      } else {
+        const fullMsg = `${baseMsg}\n🌐 *Location:* Not supported`;
+        sendWhatsApp(fullMsg, merchantNumber);
+        sendWhatsApp(fullMsg, adminNumber);
+      }
 
       closeModal();
       toggleCart();
-    }
-
-    function setAutoDeliveryDateTime() {
-      const today = new Date();
-      const date = today.toLocaleDateString('en-PH', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-      document.getElementById("cust-date").value = date;
-      document.getElementById("cust-time").value = "ASAP (within 1 hour)";
     }
 
     renderProducts();
