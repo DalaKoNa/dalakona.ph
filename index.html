@@ -1,107 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DalaKoNa Personal Shopper 🛒</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DalaKoNa Personal Shopper</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
-
     body {
-      background-color: #fffdf7;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background-color: #fdfdfd;
       color: #333;
-      line-height: 1.6;
-      padding: 20px;
     }
-
     header {
+      background-color: #007b5e;
+      color: white;
+      padding: 1rem;
       text-align: center;
-      margin-bottom: 2rem;
     }
-
-    h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #4CAF50;
+    .hero {
+      padding: 2rem;
+      background: #f1f1f1;
+      text-align: center;
     }
-
-    p.lead {
-      font-size: 1.1rem;
-      color: #555;
-      margin: 10px 0;
+    .hero h1 {
+      margin-bottom: 0.5rem;
     }
-
     .categories {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
-      max-width: 800px;
-      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem 1rem;
     }
-
     .category {
-      background: #f2f2f2;
-      padding: 20px;
-      border-radius: 12px;
+      background: white;
+      padding: 1.5rem;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      width: 250px;
       text-align: center;
-      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
-      transition: transform 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
     }
-
     .category:hover {
-      transform: scale(1.05);
-      background-color: #e0ffe0;
+      transform: scale(1.03);
     }
-
     .category a {
+      color: #007b5e;
       text-decoration: none;
-      font-weight: 600;
-      color: #333;
+      font-weight: bold;
     }
-
     footer {
+      background: #007b5e;
+      color: white;
       text-align: center;
-      margin-top: 3rem;
+      padding: 1rem;
       font-size: 0.9rem;
-      color: #777;
+    }
+    .whatsapp-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #25D366;
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      text-decoration: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 100;
     }
   </style>
 </head>
-
 <body>
   <header>
-    <h1>DalaKoNa 🛍️ Personal Shopper</h1>
-    <p class="lead">Order anything. We'll shop and deliver it to you. One chat away.</p>
+    <h1>DalaKoNa Personal Shopper 🛍️</h1>
+    <p>Your on-demand delivery & errand service</p>
   </header>
+
+  <section class="hero">
+    <h2>Order from your favorite shops — We’ll deliver it for you!</h2>
+    <p>Choose a category below to get started.</p>
+  </section>
 
   <section class="categories">
     <div class="category">
-      <a href="cakes.html">🎂 Cakes</a>
+      <h3>Cakes & Baked Goods</h3>
+      <a href="cakes.html">Browse Cakes</a>
     </div>
     <div class="category">
-      <a href="grocery.html">🛒 Groceries</a>
+      <h3>Groceries</h3>
+      <a href="grocery.html">Shop Essentials</a>
     </div>
     <div class="category">
-      <a href="pharmacy.html">💊 Pharmacy</a>
+      <h3>Pharmacy</h3>
+      <a href="pharmacy.html">Order Medicine</a>
     </div>
     <div class="category">
-      <a href="clothing.html">👗 Tailoring / Gowns</a>
+      <h3>Tailoring</h3>
+      <a href="tailoring.html">Request Service</a>
     </div>
     <div class="category">
-      <a href="custom-request.html">📋 Custom Request</a>
+      <h3>Custom Requests</h3>
+      <a href="custom.html">Send DalaKoNa!</a>
     </div>
   </section>
 
+  <a class="whatsapp-float" href="https://wa.me/63XXXXXXXXXX" target="_blank" title="Chat with us on WhatsApp">
+    🟢
+  </a>
+
   <footer>
-    <p>Powered by DalaKoNa • Personal Shopping & Delivery Service via WhatsApp</p>
+    &copy; 2025 DalaKoNa. All rights reserved. | Powered by Dala🚲Na
   </footer>
 </body>
-
 </html>
