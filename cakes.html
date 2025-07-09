@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Goldilocks Cakes - DalaὯNa</title>
+  <title>Goldilocks Cakes - DalaKoNa</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -117,10 +116,45 @@
     </div>
   </div>
 
+  <!-- Checkout Modal -->
+  <div id="checkout-modal" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  ">
+    <div style="
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    ">
+      <h3>Customer Info</h3>
+      <label>Name:<br><input type="text" id="cust-name" required style="width: 100%;" /></label><br><br>
+      <label>Phone:<br><input type="text" id="cust-phone" required style="width: 100%;" /></label><br><br>
+      <label>Delivery Address:<br><input type="text" id="cust-address" required style="width: 100%;" /></label><br><br>
+      <label>Delivery Time:<br><input type="text" id="cust-time" required style="width: 100%;" /></label><br><br>
+      <label>Payment Method:<br>
+        <select id="cust-payment" style="width: 100%;">
+          <option value="Cash on Delivery">Cash on Delivery</option>
+          <option value="GCash">GCash</option>
+          <option value="PayMaya">PayMaya</option>
+        </select>
+      </label><br><br>
+      <button onclick="submitOrder()" style="width: 100%; padding: 0.6rem; background: green; color: white; font-weight: bold; border: none;">Place Order</button>
+      <button onclick="closeModal()" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.2rem;">✖</button>
+    </div>
+  </div>
+
   <script>
     const deliveryFee = 29.99;
     const serviceFee = 10.01;
-    const markup = 1;
 
     const products = [
       { name: "Black Forest Cake", price: 649 },
@@ -187,8 +221,40 @@
     }
 
     function checkout() {
-      alert("Redirecting to checkout form...");
-      // trigger Fillout modal / WhatsApp here
+      document.getElementById("checkout-modal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("checkout-modal").style.display = "none";
+    }
+
+    function submitOrder() {
+      const name = document.getElementById("cust-name").value.trim();
+      const phone = document.getElementById("cust-phone").value.trim();
+      const address = document.getElementById("cust-address").value.trim();
+      const time = document.getElementById("cust-time").value.trim();
+      const payment = document.getElementById("cust-payment").value;
+
+      if (!name || !phone || !address || !time) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const items = Object.values(cart)
+        .map(item => `${item.name} x${item.qty} = ₱${(item.qty * item.price).toFixed(2)}`)
+        .join('\n');
+
+      const subtotal = Object.values(cart).reduce((sum, item) => sum + item.qty * item.price, 0);
+      const total = subtotal + deliveryFee + serviceFee;
+
+      const message = `*DalaKoNa Order*\n\n🧁 *Items:*\n${items}\n\nSubtotal: ₱${subtotal.toFixed(2)}\nDelivery: ₱${deliveryFee}\nService Fee: ₱${serviceFee}\n*Total: ₱${total.toFixed(2)}*\n\n📍 *Delivery Address:* ${address}\n🕒 *Time:* ${time}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n💸 *Payment:* ${payment}`;
+
+      const phoneNumber = "63XXXXXXXXXX"; // Replace with real WhatsApp
+      const encodedMsg = encodeURIComponent(message);
+      window.open(`https://wa.me/${phoneNumber}?text=${encodedMsg}`, "_blank");
+
+      closeModal();
+      toggleCart();
     }
 
     renderProducts();
