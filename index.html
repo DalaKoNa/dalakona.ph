@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DalaKoNa Personal Shopper 🛒</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: #fffdf7;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #4CAF50;
+    }
+
+    p.lead {
+      font-size: 1.1rem;
+      color: #555;
+      margin: 10px 0;
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .category {
+      background: #f2f2f2;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .category:hover {
+      transform: scale(1.05);
+      background-color: #e0ffe0;
+    }
+
+    .category a {
+      text-decoration: none;
+      font-weight: 600;
+      color: #333;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>DalaKoNa 🛍️ Personal Shopper</h1>
+    <p class="lead">Order anything. We'll shop and deliver it to you. One chat away.</p>
+  </header>
+
+  <section class="categories">
+    <div class="category">
+      <a href="cakes.html">🎂 Cakes</a>
+    </div>
+    <div class="category">
+      <a href="grocery.html">🛒 Groceries</a>
+    </div>
+    <div class="category">
+      <a href="pharmacy.html">💊 Pharmacy</a>
+    </div>
+    <div class="category">
+      <a href="clothing.html">👗 Tailoring / Gowns</a>
+    </div>
+    <div class="category">
+      <a href="custom-request.html">📋 Custom Request</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>Powered by DalaKoNa • Personal Shopping & Delivery Service via WhatsApp</p>
+  </footer>
+</body>
+
+</html>
