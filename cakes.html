@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Goldilocks Cakes - DalaKoNa</title>
+  <title>Cakes from Goldilocks - Dala🚲Na</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
@@ -75,10 +75,13 @@
       display: flex;
       justify-content: space-between;
     }
-    .cart-items, .cart-footer {
+    .cart-items {
       padding: 1rem;
       flex-grow: 1;
       overflow-y: auto;
+    }
+    .cart-footer {
+      padding: 1rem;
     }
     .checkout-btn {
       width: 100%;
@@ -107,13 +110,7 @@
       <button onclick="toggleCart()">X</button>
     </div>
     <div class="cart-items" id="cart-items"></div>
-    <div class="cart-footer">
-      <p>Subtotal: ₱<span id="subtotal">0.00</span></p>
-      <p>Delivery Fee: ₱29.99</p>
-      <p>Service Fee: ₱10.01</p>
-      <p><strong>Total: ₱<span id="total">0.00</span></strong></p>
-      <button class="checkout-btn" onclick="checkout()">Checkout</button>
-    </div>
+    <div class="cart-footer" id="cart-footer"></div>
   </div>
 
   <!-- Checkout Modal -->
@@ -139,7 +136,8 @@
       <label>Name:<br><input type="text" id="cust-name" required style="width: 100%;" /></label><br><br>
       <label>Phone:<br><input type="text" id="cust-phone" required style="width: 100%;" /></label><br><br>
       <label>Delivery Address:<br><input type="text" id="cust-address" required style="width: 100%;" /></label><br><br>
-      <label>Delivery Time:<br><input type="text" id="cust-time" required style="width: 100%;" /></label><br><br>
+      <label>Delivery Date:<br><input type="text" id="cust-date" style="width: 100%;" readonly /></label><br><br>
+      <label>Delivery Time:<br><input type="text" id="cust-time" style="width: 100%;" readonly /></label><br><br>
       <label>Payment Method:<br>
         <select id="cust-payment" style="width: 100%;">
           <option value="Cash on Delivery">Cash on Delivery</option>
@@ -207,12 +205,18 @@
 
     function updateCart() {
       const container = document.getElementById("cart-items");
+      const footer = document.getElementById("cart-footer");
       const subtotal = Object.values(cart).reduce((sum, item) => sum + item.qty * item.price, 0);
       container.innerHTML = Object.values(cart).map(item => `
         <p>${item.name} x${item.qty} = ₱${(item.qty * item.price).toFixed(2)}</p>
       `).join("");
-      document.getElementById("subtotal").textContent = subtotal.toFixed(2);
-      document.getElementById("total").textContent = (subtotal + deliveryFee + serviceFee).toFixed(2);
+      footer.innerHTML = `
+        <p>Subtotal: ₱${subtotal.toFixed(2)}</p>
+        <p>Delivery Fee: ₱${deliveryFee.toFixed(2)}</p>
+        <p>Service Fee: ₱${serviceFee.toFixed(2)}</p>
+        <p><strong>Total: ₱${(subtotal + deliveryFee + serviceFee).toFixed(2)}</strong></p>
+        <button class="checkout-btn" onclick="checkout()">Checkout</button>
+      `;
       document.getElementById("cart-count").textContent = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
     }
 
@@ -229,13 +233,19 @@
     }
 
     function submitOrder() {
+      if (Object.keys(cart).length === 0) {
+        alert("Your cart is empty.");
+        return;
+      }
+
       const name = document.getElementById("cust-name").value.trim();
       const phone = document.getElementById("cust-phone").value.trim();
       const address = document.getElementById("cust-address").value.trim();
+      const date = document.getElementById("cust-date").value.trim();
       const time = document.getElementById("cust-time").value.trim();
       const payment = document.getElementById("cust-payment").value;
 
-      if (!name || !phone || !address || !time) {
+      if (!name || !phone || !address || !date || !time) {
         alert("Please fill in all fields.");
         return;
       }
@@ -247,9 +257,9 @@
       const subtotal = Object.values(cart).reduce((sum, item) => sum + item.qty * item.price, 0);
       const total = subtotal + deliveryFee + serviceFee;
 
-      const message = `*DalaKoNa Order*\n\n🧁 *Items:*\n${items}\n\nSubtotal: ₱${subtotal.toFixed(2)}\nDelivery: ₱${deliveryFee}\nService Fee: ₱${serviceFee}\n*Total: ₱${total.toFixed(2)}*\n\n📍 *Delivery Address:* ${address}\n🕒 *Time:* ${time}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n💸 *Payment:* ${payment}`;
+      const message = `*DalaKoNa Order*\n\n🧁 *Items:*\n${items}\n\nSubtotal: ₱${subtotal.toFixed(2)}\nDelivery: ₱${deliveryFee}\nService Fee: ₱${serviceFee}\n*Total: ₱${total.toFixed(2)}*\n\n📍 *Delivery Address:* ${address}\n🗓 *Date:* ${date}\n🕒 *Time:* ${time}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n💸 *Payment:* ${payment}`;
 
-      const phoneNumber = "63XXXXXXXXXX"; // Replace with real WhatsApp
+      const phoneNumber = "63XXXXXXXXXX"; // Replace with actual WhatsApp number
       const encodedMsg = encodeURIComponent(message);
       window.open(`https://wa.me/${phoneNumber}?text=${encodedMsg}`, "_blank");
 
@@ -257,7 +267,19 @@
       toggleCart();
     }
 
+    function setAutoDeliveryDateTime() {
+      const today = new Date();
+      const date = today.toLocaleDateString('en-PH', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+      document.getElementById("cust-date").value = date;
+      document.getElementById("cust-time").value = "ASAP (within 1 hour)";
+    }
+
     renderProducts();
+    setAutoDeliveryDateTime();
   </script>
 </body>
 </html>
