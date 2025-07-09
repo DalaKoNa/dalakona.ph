@@ -3,133 +3,195 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DalaKoNa Personal Shopper - Goldilocks</title>
+  <title>Goldilocks Cakes - DalaὯNa</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <script defer src="dala-cart.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fffbe6;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background-color: #ffcc00;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .cart-icon {
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .product-card {
+      background: white;
+      padding: 0.75rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .product-card h4 {
+      font-size: 1rem;
+      margin: 0.25rem 0;
+    }
+    .product-card button {
+      background: #ffcc00;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .cart-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 320px;
+      height: 100%;
+      background: #fff;
+      box-shadow: -3px 0 6px rgba(0,0,0,0.2);
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      z-index: 999;
+    }
+    .cart-panel.open {
+      transform: translateX(0);
+    }
+    .cart-header {
+      padding: 1rem;
+      background: #ffcc00;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+    .cart-items, .cart-footer {
+      padding: 1rem;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+    .checkout-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: green;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body class="bg-yellow-50 text-gray-900 font-inter">
-  <header class="flex items-center justify-between px-4 py-3 bg-yellow-200 shadow">
-    <a href="select-store.html" class="text-lg font-semibold">← Back</a>
-    <h1 class="text-xl font-bold">Goldilocks Cakes</h1>
-    <button id="cart-button" class="relative">
-      🛒<span id="cart-count" class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">0</span>
-    </button>
-  </header>
-
-  <main class="p-4">
-    <input type="text" id="search-input" placeholder="Search products..." class="w-full p-2 mb-4 border rounded" />
-    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- Products will be inserted here dynamically -->
+<body>
+  <div class="header">
+    <h1>Goldilocks</h1>
+    <div class="cart-icon" onclick="toggleCart()">
+      <i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span>
     </div>
-  </main>
+  </div>
 
-  <aside id="cart" class="fixed right-0 top-0 h-full w-80 bg-white border-l shadow-lg transform translate-x-full transition-transform z-50">
-    <div class="p-4 flex justify-between items-center border-b">
-      <h2 class="text-lg font-bold">Dala🛒Cart</h2>
-      <button id="close-cart">✕</button>
+  <div class="product-grid" id="product-grid"></div>
+
+  <div class="cart-panel" id="cart-panel">
+    <div class="cart-header">
+      <span>Your Cart</span>
+      <button onclick="toggleCart()">X</button>
     </div>
-    <div id="cart-items" class="p-4 overflow-y-auto h-2/3"></div>
-    <div class="p-4 border-t">
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-footer">
       <p>Subtotal: ₱<span id="subtotal">0.00</span></p>
       <p>Delivery Fee: ₱29.99</p>
       <p>Service Fee: ₱10.01</p>
-      <p class="font-bold">Total: ₱<span id="total">0.00</span></p>
-      <button id="checkout-button" class="mt-4 w-full bg-green-500 text-white py-2 rounded">Checkout</button>
-      <p class="text-xs text-gray-500 mt-2">By continuing, you agree to our <a href="#" class="underline">Terms & Conditions</a>.</p>
-    </div>
-  </aside>
-
-  <div id="fillout-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6 w-full max-w-lg relative">
-      <button id="close-modal" class="absolute top-2 right-2 text-xl">✕</button>
-      <iframe id="fillout-frame" class="w-full h-[600px]" src="https://forms.fillout.com/t/oMZACWUnvFus?customerName=&customerPhone=&customerEmail=&deliveryDate=&deliveryTime=&cartSummary=&customizationNotes=&whatsappNumber=&store=Goldilocks" frameborder="0"></iframe>
+      <p><strong>Total: ₱<span id="total">0.00</span></strong></p>
+      <button class="checkout-btn" onclick="checkout()">Checkout</button>
     </div>
   </div>
 
   <script>
-    const DELIVERY_FEE = 29.99;
-    const SERVICE_FEE = 10.01;
-    const STORE_NAME = "Goldilocks";
-    const cart = {};
+    const deliveryFee = 29.99;
+    const serviceFee = 10.01;
+    const markup = 1;
+
     const products = [
-      { category: "Premium Cakes", name: "Black Forest Cake", price: 649 },
-      { category: "Premium Cakes", name: "Chocolate Mousse Cake", price: 649 },
-      { category: "Premium Cakes", name: "Classic Sansrival", price: 825 },
-      { category: "Premium Cakes", name: "Royal Fudge Cake with Toblerone", price: 649 },
-      { category: "Premium Cakes", name: "Chocolate Cherry Torte", price: 649 },
-      { category: "Greeting Cakes Classic 8x12", name: "Pastel Blooms Mocha 8x12 with Filling", price: 649 },
-      { category: "Greeting Cakes Classic 8x13", name: "Pastel Blooms Choco 8x12 with Filling", price: 649 },
-      { category: "Greeting Cakes Classic 8x14", name: "Celebrate Mocha 8x12", price: 649 },
-      { category: "Greeting Cakes Classic 8x15", name: "Celebrate Choco 8x12", price: 649 },
-      { category: "Greeting Cakes Classic 8x16", name: "Balloons Mocha 8x12", price: 649 },
-      { category: "Greeting Cakes Classic 8x17", name: "Balloons Choco 8x12", price: 649 },
-      { category: "Greeting Cakes Classic 8x18", name: "Unicorn Mocha 8x12 with Filling", price: 649 },
-      { category: "Greeting Cakes Classic 8x19", name: "Unicorn Choco 8x12", price: 649 },
-      { category: "Greeting Cakes Classic 8x20", name: "Pastel Blooms Ube 8x12", price: 759 },
-      { category: "Greeting Cakes Dual/Triple 8x12", name: "Luscious Caramel 8x12", price: 770 },
-      { category: "Greeting Cakes Classic 9 Round", name: "Pastel Blooms Choco 9\" Round with Filling", price: 429 },
-      { category: "Greeting Cakes Classic 9 Round", name: "Pastel Blooms Mocha 9\" Round with Filling", price: 429 },
-      { category: "Greeting Cakes Classic 9 Round", name: "Luscious Caramel 9\" Round", price: 568 },
-      { category: "Greeting Cakes Dual/Triple 9 Round", name: "Luscious Caramel 9\" Round", price: 605 },
-      { category: "Whole Rolls", name: "Classic Mocha Whole Roll", price: 330 },
-      { category: "Whole Rolls", name: "Brazo de Mercedes Whole Roll", price: 429 },
-      { category: "Native Cakes", name: "Eggpie", price: 275 },
-      { category: "Native Cakes", name: "Butter Macaroons", price: 61 },
-      { category: "Loaf Breads", name: "Egg & Milk Bread", price: 83 },
-      { category: "Sweet Breads", name: "Monay", price: 72 },
-      { category: "Sweet Breads", name: "Mongo Loaf", price: 61 },
-      { category: "Sweet Breads", name: "Ube Loaf", price: 61 },
-      { category: "Polvoron - Box", name: "Assorted Polvoron Box", price: 220 },
-      { category: "Polvoron - Box", name: "Classic Polvoron Box", price: 176 },
-      { category: "Polvoron - Box", name: "Cashew Polvoron Box", price: 143 },
-      { category: "Polvoron - Box", name: "Cookies n Cream Polvoron Box", price: 143 },
-      { category: "Polvoron - Box", name: "Pinipig Polvoron Box", price: 143 },
-      { category: "Polvoron - Box", name: "Ube Polvoron Box", price: 143 },
-      { category: "Polvoron - Pouch", name: "Assorted Polvoron", price: 72 },
-      { category: "Polvoron - Pouch", name: "Classic Polvoron", price: 99 },
-      { category: "Polvoron - Pouch", name: "Cashew Polvoron", price: 62 },
-      { category: "Polvoron - Pouch", name: "Cookies and Cream Polvoron", price: 62 },
-      { category: "Polvoron - Pouch", name: "Pinipig Polvoron", price: 62 },
-      { category: "Polvoron - Pouch", name: "Ube Polvoron", price: 62 },
-      { category: "Pambaon", name: "Classic Brownies Big", price: 50 },
-      { category: "Pambaon", name: "Classic Brownies Box", price: 253 },
-      { category: "Pambaon", name: "Chiffon Cake Slice", price: 29 },
-      { category: "Pambaon", name: "Double Dutch Cake Sliced", price: 29 },
-      { category: "Pambaon", name: "Butter Cake Sliced", price: 29 },
-      { category: "Pambaon", name: "Chocolate Cake Sliced", price: 29 },
-      { category: "Pambaon", name: "Marble Cake Sliced", price: 29 },
-      { category: "Pambaon", name: "Mocha Marble Cake Sliced", price: 29 },
-      { category: "Pambaon", name: "Fluffy Mamon", price: 25 },
-      { category: "Pambaon", name: "Cheesy Ensaymada", price: 30 },
-      { category: "Pambaon", name: "Chocolate Chip Cookies", price: 50 },
-      { category: "Pambaon", name: "Raisin Oatmeal Cookies", price: 50 },
-      { category: "Pambaon", name: "Mongo Hopia", price: 72 },
-      { category: "Pambaon", name: "Ube Ensaymada Hugs", price: 132 },
-      { category: "Bitbit 3 Pcs", name: "Cheesy Ensaymada Bitbit 3 Pcs", price: 86 },
-      { category: "Bitbit 3 Pcs", name: "Fluffy Mamon Bitbit 3 Pcs", price: 70 },
-      { category: "Bitbit 3 Pcs", name: "Butter Sliced Bitbit 3 Pcs", price: 83 },
-      { category: "Bitbit 3 Pcs", name: "Chocolate Sliced Bitbit 3 Pcs", price: 83 },
-      { category: "Bitbit 3 Pcs", name: "Marble Sliced Bitbit 3 Pcs", price: 83 },
-      { category: "Bitbit 3 Pcs", name: "Double Dutch Sliced Bitbit 3 Pcs", price: 83 },
-      { category: "Bitbit 3 Pcs", name: "Mocha Marble Sliced Bitbit 3 Pcs", price: 83 },
-      { category: "Bitbit 3 Pcs", name: "Chiffon Sliced Bitbit 3 Pcs", price: 83 },
-      { category: "Bitbit 6 Pcs", name: "Cheesy Ensaymada Bitbit 6 Pcs", price: 171 },
-      { category: "Bitbit 6 Pcs", name: "Fluffy Mamon Bitbit 6 Pcs", price: 132 },
-      { category: "Bitbit 6 Pcs", name: "Assorted Butter Cake Sliced Bitbit 6 Pcs", price: 160 },
-      { category: "Bitbit 6 Pcs", name: "Assorted Chiffon Cake Sliced Bitbit 6 Pcs", price: 160 },
-      { category: "Sweets", name: "Nutty Caramel Popcorn", price: 22 },
-      { category: "Sweets", name: "Caramel Popcorn Big", price: 33 },
-      { category: "Pinoy Deli RTE", name: "Pinoy Deli RTE - Laing", price: 329 },
-      { category: "Pinoy Deli RTE", name: "Pinoy Deli RTE - Dinuguan", price: 494 },
-      { category: "Pinoy Deli RTE", name: "Pinoy Deli RTE - Kare Kare", price: 549 },
-      { category: "Pinoy Deli RTE", name: "Pinoy Deli RTE - Pork BBQ 10pcs", price: 439 },
-      { category: "Pinoy Deli RTE", name: "Pinoy Deli RTE - Caldereta", price: 549 },
-      { category: "Pinoy Deli - Food Selections", name: "FS. Beef Caldereta", price: 109 },
-      { category: "Pinoy Deli - Food Selections", name: "FS. Pork Dinuguan", price: 109 },
-      { category: "Pinoy Deli - Food Selections", name: "FS. Boneless Chicken Barbecue", price: 109 },
-      { category: "Pinoy Deli - Food Selections", name: "FS. Beef Kare-kare", price: 109 },
+      { name: "Black Forest Cake", price: 649 },
+      { name: "Chocolate Mousse Cake", price: 649 },
+      { name: "Classic Sansrival", price: 825 },
+      { name: "Royal Fudge Cake with Toblerone", price: 649 },
+      { name: "Chocolate Cherry Torte", price: 649 },
+      { name: "Pastel Blooms Mocha 8x12", price: 649 },
+      { name: "Pastel Blooms Choco 8x12", price: 649 },
+      { name: "Celebrate Mocha 8x12", price: 649 },
+      { name: "Celebrate Choco 8x12", price: 649 },
+      { name: "Balloons Mocha 8x12", price: 649 },
+      { name: "Balloons Choco 8x12", price: 649 },
+      { name: "Unicorn Mocha 8x12", price: 649 },
+      { name: "Unicorn Choco 8x12", price: 649 },
+      { name: "Pastel Blooms Ube 8x12", price: 759 },
+      { name: "Luscious Caramel 8x12", price: 770 },
+      { name: "Pastel Blooms Choco 9\"", price: 429 },
+      { name: "Pastel Blooms Mocha 9\"", price: 429 },
+      { name: "Luscious Caramel 9\"", price: 568 },
+      { name: "Luscious Caramel 9\" Round", price: 605 },
+      { name: "Classic Mocha Whole Roll", price: 330 },
+      { name: "Brazo de Mercedes Whole Roll", price: 429 },
+      { name: "Eggpie", price: 275 },
+      { name: "Butter Macaroons", price: 61 },
     ];
+
+    const cart = {};
+
+    function renderProducts() {
+      const grid = document.getElementById("product-grid");
+      products.forEach((p, index) => {
+        const div = document.createElement("div");
+        div.className = "product-card";
+        div.innerHTML = `
+          <h4>${p.name}</h4>
+          <p>₱${p.price.toFixed(2)}</p>
+          <button onclick="addToCart(${index})">Add to Cart</button>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    function addToCart(index) {
+      const key = products[index].name;
+      if (!cart[key]) cart[key] = { ...products[index], qty: 0 };
+      cart[key].qty++;
+      updateCart();
+    }
+
+    function updateCart() {
+      const container = document.getElementById("cart-items");
+      const subtotal = Object.values(cart).reduce((sum, item) => sum + item.qty * item.price, 0);
+      container.innerHTML = Object.values(cart).map(item => `
+        <p>${item.name} x${item.qty} = ₱${(item.qty * item.price).toFixed(2)}</p>
+      `).join("");
+      document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+      document.getElementById("total").textContent = (subtotal + deliveryFee + serviceFee).toFixed(2);
+      document.getElementById("cart-count").textContent = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
+    }
+
+    function toggleCart() {
+      document.getElementById("cart-panel").classList.toggle("open");
+    }
+
+    function checkout() {
+      alert("Redirecting to checkout form...");
+      // trigger Fillout modal / WhatsApp here
+    }
+
+    renderProducts();
   </script>
 </body>
 </html>
