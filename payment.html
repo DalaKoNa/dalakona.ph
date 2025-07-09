@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Instructions - Dala🚲Na</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fffdf5;
+      margin: 0;
+      padding: 2rem 1rem;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    .method {
+      margin-top: 2rem;
+    }
+    .method h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1.25rem;
+      color: #444;
+    }
+    .qr {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    .qr img {
+      max-width: 200px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+    }
+    .number {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-top: 0.3rem;
+    }
+    .total {
+      background: #fffcdb;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 2rem;
+      font-weight: bold;
+    }
+    .note {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💸 Payment Instructions</h1>
+
+    <div class="total">
+      Amount to Pay: <span id="total-amount">₱XXX.XX</span>
+    </div>
+
+    <div class="method">
+      <h2>GCash</h2>
+      <div class="qr">
+        <img src="your-gcash-qr.png" alt="GCash QR" />
+      </div>
+      <div class="number">09XXXXXXXXX</div>
+    </div>
+
+    <div class="method">
+      <h2>PayMaya</h2>
+      <div class="qr">
+        <img src="your-paymaya-qr.png" alt="PayMaya QR" />
+      </div>
+      <div class="number">09XXXXXXXXX</div>
+    </div>
+
+    <div class="note">
+      Once paid, please take a screenshot and send it via WhatsApp along with your order.
+    </div>
+  </div>
+
+  <script>
+    // Optional: Dynamically insert total amount from session/localStorage
+    const total = localStorage.getItem("dalatotal");
+    if (total) {
+      document.getElementById("total-amount").textContent = `₱${parseFloat(total).toFixed(2)}`;
+    }
+  </script>
+</body>
+</html>
