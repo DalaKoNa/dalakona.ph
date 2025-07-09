@@ -1,0 +1,17 @@
+.checkout-modal-content {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.checkout-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
