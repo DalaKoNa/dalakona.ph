@@ -264,12 +264,11 @@ function setAutoDeliveryDateTime() {
   document.getElementById("delivery-time").value = oneHourLater.toTimeString().slice(0, 5);
   document.getElementById("delivery-note").textContent = "✅ Delivery is scheduled within 1 hour from merchant confirmation.";
 }
-
 function submitOrder() {
   const name = document.getElementById("cust-name").value.trim();
   const phone = document.getElementById("cust-phone").value.trim();
   const address = document.getElementById("cust-address").value.trim();
-  const request = document.getElementById("cust-request").value.trim();
+  const request = document.getElementById("cust-notes").value.trim(); // ✅ FIXED ID
   const payment = document.getElementById("cust-payment").value;
   const date = document.getElementById("delivery-date").value;
   const time = document.getElementById("delivery-time").value;
@@ -295,7 +294,7 @@ function submitOrder() {
     const message = `*DalaKoNa Order*\n\n🧁 *Items:*\n${items}\n\nSubtotal: ₱${subtotal.toFixed(2)}\nDelivery: ₱${deliveryFee}\nService Fee: ₱${serviceFee}\n*Total: ₱${total.toFixed(2)}*\n\n📍 *Address:* ${address}\n🗓 *Date:* ${date}\n🕒 *Time:* ${time}\n🌐 *Location:* ${locationUrl}\n🧾 *Request:* ${request || 'None'}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n💸 *Payment:* ${payStatus}`;
 
     const encoded = encodeURIComponent(message);
-    const phoneNumber = "63XXXXXXXXXX"; // Replace with real merchant number
+    const phoneNumber = "63XXXXXXXXXX"; // Replace with merchant's WhatsApp number
     window.open(`https://wa.me/${phoneNumber}?text=${encoded}`, '_blank');
 
     closeModal();
